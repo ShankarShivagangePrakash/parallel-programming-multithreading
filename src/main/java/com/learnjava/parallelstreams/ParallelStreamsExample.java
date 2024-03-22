@@ -28,7 +28,7 @@ public class ParallelStreamsExample {
                 .collect(Collectors.toList());
     }
 
-   /* public List<String> stringTransform_1(List<String> namesList, boolean isParallel) {
+    public List<String> stringTransform_1(List<String> namesList, boolean isParallel) {
 
         Stream<String> nameStream = namesList.stream();
 
@@ -38,7 +38,7 @@ public class ParallelStreamsExample {
         return nameStream
                 .map(this::addNameLengthTransform)
                 .collect(Collectors.toList());
-    }*/
+    }
 
     private String addNameLengthTransform(String name) {
         delay(500);
