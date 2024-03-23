@@ -6,6 +6,8 @@ import com.learnjava.domain.checkout.CheckoutStatus;
 import com.learnjava.util.DataSet;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ForkJoinPool;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckoutServiceTest {
@@ -53,6 +55,28 @@ class CheckoutServiceTest {
         CheckoutResponse checkoutResponse = checkoutService.checkout(cart, false);
 
         assertEquals(CheckoutStatus.SUCCESS, checkoutResponse.getCheckoutStatus());
+    }
+
+    @Test
+    void parallelism() {
+        // parallelism =  no of cores -1
+        System.out.println("parallelism : " + ForkJoinPool.getCommonPoolParallelism());
+    }
+
+    @Test
+    void checkout_modify_parallelism() {
+
+        //given
+        // -Djava.util.concurrent.ForkJoinPool.common.parallelism=100
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "100");
+
+        Cart cart = DataSet.createCart(105);
+
+        //when
+        CheckoutResponse checkoutResponse = checkoutService.checkout(cart, false);
+
+        //then
+        assertEquals(CheckoutStatus.FAILURE, checkoutResponse.getCheckoutStatus());
     }
 
 }
