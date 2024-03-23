@@ -21,7 +21,7 @@ public class CheckoutService {
         this.priceValidatorService = priceValidatorService;
     }
 
-    public CheckoutResponse checkout(Cart cart) {
+    public CheckoutResponse checkout(Cart cart, boolean useCollect) {
 
         startTimer();
         List<CartItem> priceValidationList = cart.getCartItemList()
@@ -42,14 +42,14 @@ public class CheckoutService {
             return new CheckoutResponse(CheckoutStatus.FAILURE, priceValidationList);
         }
 
-        //double finalRate = calculateFinalPrice(cart);
-        double finalRate = calculateFinalPrice_reduce(cart);
+        double finalRate = useCollect ? calculateFinalPrice_collect(cart) : calculateFinalPrice_reduce(cart);
         log("Checkout Complete and the final rate is " + finalRate);
 
         return new CheckoutResponse(CheckoutStatus.SUCCESS, finalRate);
     }
 
-    private double calculateFinalPrice(Cart cart) {
+    private double calculateFinalPrice_collect(Cart cart) {
+        log("Using collect() to find the cart total price");
         return cart.getCartItemList()
                 .parallelStream()
                 .map(cartItem -> cartItem.getQuantity() * cartItem.getRate())
@@ -59,6 +59,7 @@ public class CheckoutService {
     }
 
     private double calculateFinalPrice_reduce(Cart cart) {
+        log("Using reduce() to find the cart total price");
         return cart.getCartItemList()
                 .parallelStream()
                 .map(cartItem -> cartItem.getQuantity() * cartItem.getRate())

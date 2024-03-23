@@ -18,7 +18,7 @@ class CheckoutServiceTest {
 
         Cart cart = DataSet.createCart(5);
 
-        CheckoutResponse checkoutResponse = checkoutService.checkout(cart);
+        CheckoutResponse checkoutResponse = checkoutService.checkout(cart, true);
 
         assertEquals(CheckoutStatus.SUCCESS, checkoutResponse.getCheckoutStatus());
     }
@@ -29,9 +29,30 @@ class CheckoutServiceTest {
         Cart cart = DataSet.createCart(Runtime.getRuntime().availableProcessors() + 1);
         System.out.println("Number of cores: " + Runtime.getRuntime().availableProcessors());
 
-        CheckoutResponse checkoutResponse = checkoutService.checkout(cart);
+        CheckoutResponse checkoutResponse = checkoutService.checkout(cart, true);
 
         assertEquals(CheckoutStatus.FAILURE, checkoutResponse.getCheckoutStatus());
+    }
+
+    @Test
+    void checkout_5_items_collect() {
+
+        Cart cart = DataSet.createCart(5);
+
+        CheckoutResponse checkoutResponse = checkoutService.checkout(cart, true);
+
+        assertEquals(CheckoutStatus.SUCCESS, checkoutResponse.getCheckoutStatus());
+    }
+
+    @Test
+    void checkout_5_items__reduce() {
+
+        Cart cart = DataSet.createCart(5);
+        System.out.println("Number of cores: " + Runtime.getRuntime().availableProcessors());
+
+        CheckoutResponse checkoutResponse = checkoutService.checkout(cart, false);
+
+        assertEquals(CheckoutStatus.SUCCESS, checkoutResponse.getCheckoutStatus());
     }
 
 }
